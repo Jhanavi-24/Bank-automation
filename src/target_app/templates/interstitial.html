@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Additional Verification Required</h2>
+<div class="notice-box">
+This member record is flagged for additional handling review before it can be displayed.
+Click Continue to acknowledge and proceed.
+</div>
+<form method="post" action="/members/{{ member_id }}/ack">
+<input type="submit" value="Continue">
+</form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{
+  "status": "business_outcome",
+  "capability_id": "lookup_member_balance",
+  "outcome_code": "MEMBER_NOT_FOUND",
+  "outputs": {},
+  "message": "The looked-up member ID does not exist in the core system.",
+  "failed_step_id": null,
+  "expected": null,
+  "observed": null,
+  "interrupts_fired": [
+    "member_not_found"
+  ],
+  "evidence_dir": null,
+  "human_intervention": false
+}

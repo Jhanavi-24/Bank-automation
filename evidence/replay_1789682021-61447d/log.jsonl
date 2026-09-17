@@ -1,0 +1,10 @@
+{"seq": 1, "ts": 1789682021.960887, "run_id": "1789682021-61447d", "run_type": "replay", "event": "replay_start", "capability_id": "lookup_member_balance", "params": {"member_id": "12346"}}
+{"seq": 2, "ts": 1789682021.9610794, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_start", "step_id": "step_1", "action": "fill", "description": "I need to enter the member ID 12345 into the \"Member ID\" text field to search for the member."}
+{"seq": 3, "ts": 1789682022.005031, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_ok", "step_id": "step_1"}
+{"seq": 4, "ts": 1789682022.0051959, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_start", "step_id": "step_2", "action": "click", "description": "The member ID 12345 has been entered into the field. Now I need to click the \"Search\" button to look up the member."}
+{"seq": 5, "ts": 1789682022.073183, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_ok", "step_id": "step_2"}
+{"seq": 6, "ts": 1789682022.073264, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_start", "step_id": "step_3", "action": "click", "description": "The search found member ID 12345 in the results table. I need to click the \"View member\" link to view the member's details and find their savings balance."}
+{"seq": 7, "ts": 1789682022.156759, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_ok", "step_id": "step_3"}
+{"seq": 8, "ts": 1789682022.15685, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_start", "step_id": "step_4", "action": "extract", "description": "I found the member's current savings balance displayed on the Member Detail page. The savings balance is shown as \"$8214.53\" in the table under \"Savings Balance\"."}
+{"seq": 9, "ts": 1789682022.1839235, "run_id": "1789682021-61447d", "run_type": "replay", "event": "step_ok", "step_id": "step_4"}
+{"seq": 10, "ts": 1789682022.1911132, "run_id": "1789682021-61447d", "run_type": "replay", "event": "replay_success", "outputs": {"savings_balance": "$530.10"}}

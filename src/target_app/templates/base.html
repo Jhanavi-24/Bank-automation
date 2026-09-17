@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ title|default('Sterling Core -- Member Services') }}</title>
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 13px; background: #d6d3ce; margin: 0; }
+  table { border-collapse: collapse; }
+  .page-table { width: 100%; }
+  .content-table { background: #ffffff; border: 1px solid #7f7f7f; padding: 0; margin: 12px; }
+  .content-table td { padding: 10px; }
+  .banner { background: #003366; color: #ffffff; padding: 6px 10px; font-weight: bold; }
+  .field-table td { padding: 4px 8px; }
+  .error-box { background: #ffe5e5; border: 1px solid #cc0000; color: #660000; padding: 8px; margin: 10px 0; }
+  .notice-box { background: #fff8dc; border: 1px solid #b8860b; color: #5c4400; padding: 8px; margin: 10px 0; }
+  .footer { color: #555555; font-size: 11px; padding: 8px; }
+</style>
+</head>
+<body>
+<table class="page-table"><tr><td class="banner">Sterling Core &mdash; Member Services Console</td></tr></table>
+<table class="content-table"><tr><td>
+{% block body %}{% endblock %}
+</td></tr></table>
+<table class="page-table"><tr><td class="footer">Sterling Core internal system. Authorized use only. Session data is not to be shared outside the institution.</td></tr></table>
+</body>
+</html>

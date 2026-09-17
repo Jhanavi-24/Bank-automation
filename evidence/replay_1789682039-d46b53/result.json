@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "capability_id": "lookup_member_balance",
+  "outcome_code": null,
+  "outputs": {
+    "savings_balance": "$3120.00"
+  },
+  "message": "Goal reached and checkpoint verified.",
+  "failed_step_id": null,
+  "expected": null,
+  "observed": null,
+  "interrupts_fired": [
+    "transient_system_busy"
+  ],
+  "evidence_dir": null,
+  "human_intervention": false
+}

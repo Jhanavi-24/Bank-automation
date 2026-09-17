@@ -1,0 +1,18 @@
+{"seq": 1, "ts": 1789682287.2816744, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "replay_start", "capability_id": "open_member_sub_account", "params": {"member_id": "12347", "account_type": "Savings", "initial_deposit": "-10"}}
+{"seq": 2, "ts": 1789682287.2819047, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_1", "action": "fill", "description": "Enter the member ID (12345) in the search field to look up the member"}
+{"seq": 3, "ts": 1789682287.3206694, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_ok", "step_id": "step_1"}
+{"seq": 4, "ts": 1789682287.3207607, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_2", "action": "click", "description": "Click the Search button to look up the member with ID 12345"}
+{"seq": 5, "ts": 1789682287.3959746, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_ok", "step_id": "step_2"}
+{"seq": 6, "ts": 1789682287.3960624, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_3", "action": "click", "description": "Click the 'View member' link to access member 12345's profile page"}
+{"seq": 7, "ts": 1789682287.4747543, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_ok", "step_id": "step_3"}
+{"seq": 8, "ts": 1789682287.4748368, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_4", "action": "click", "description": "Click the 'Open Sub-Account' link to start the process of opening a new sub-account"}
+{"seq": 9, "ts": 1789682287.5501552, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_ok", "step_id": "step_4"}
+{"seq": 10, "ts": 1789682287.5503113, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_5", "action": "select_option", "description": "Select 'Savings' as the account type from the dropdown menu"}
+{"seq": 11, "ts": 1789682292.5768776, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_ok", "step_id": "step_5"}
+{"seq": 12, "ts": 1789682292.5770023, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_6", "action": "fill", "description": "Enter the initial deposit amount of 500 in the Initial Deposit field"}
+{"seq": 13, "ts": 1789682292.5929472, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_ok", "step_id": "step_6"}
+{"seq": 14, "ts": 1789682292.593041, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_7", "action": "click", "description": "Click the Continue button to proceed with opening the sub-account"}
+{"seq": 15, "ts": 1789682292.6630607, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_ok", "step_id": "step_7"}
+{"seq": 16, "ts": 1789682292.66315, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_start", "step_id": "step_8", "action": "click", "description": "Click 'Confirm and Open Account' button to finalize the creation of the new Savings sub-account"}
+{"seq": 17, "ts": 1789682307.675313, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "step_error", "step_id": "step_8", "error": "None of 4 candidate locators resolved. Last error: Locator.wait_for: Timeout 5000ms exceeded.\nCall log:\n  - waiting for locator(\"body > table:nth-of-type(2) > tbody > tr > td > form > input:nth-of-type(3)\").first to be visible\n", "attempt": 1}
+{"seq": 18, "ts": 1789682311.7058618, "run_id": "1789682287-9b4715", "run_type": "replay", "event": "interrupt_fired", "rule": "invalid_deposit_amount", "classification": "business_outcome", "outcome_code": "INVALID_DEPOSIT_AMOUNT", "occurrence": 1}

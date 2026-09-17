@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Confirm New Sub-Account</h2>
+<div class="notice-box">Please review carefully. Submitting this form creates a new account and cannot be undone.</div>
+<table border="1" cellpadding="6">
+<tr><td>Member</td><td>{{ member.full_name }} ({{ member.member_id }})</td></tr>
+<tr><td>Account Type</td><td>{{ account_type }}</td></tr>
+<tr><td>Initial Deposit</td><td>${{ "%.2f"|format(initial_deposit) }}</td></tr>
+</table>
+<form method="post" action="/members/{{ member.member_id }}/sub-accounts/confirm">
+<input type="hidden" name="account_type" value="{{ account_type }}">
+<input type="hidden" name="initial_deposit" value="{{ initial_deposit }}">
+<input type="submit" value="Confirm and Open Account">
+</form>
+<p><a href="/members/{{ member.member_id }}">Cancel</a></p>
+{% endblock %}

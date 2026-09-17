@@ -1,0 +1,44 @@
+# Safety allowlist for the mock Sterling Core target.
+#
+# This is deliberately explicit and conservative: anything not listed here is
+# denied by default (see src/safety/allowlist.py -- fail-closed). In a real
+# deployment this file (or its equivalent) would be per-tenant configuration
+# reviewed before a capability is approved for use against that tenant.
+
+allowed_domains:
+  - "127.0.0.1:5055"
+  - "localhost:5055"
+
+# Route patterns the agent/replay may navigate to or submit forms against.
+# Matched with re.fullmatch against the URL path (query string stripped).
+allowed_routes:
+  - "/"
+  - "/login"
+  - "/logout"
+  - "/session-expired"
+  - "/search"
+  - "/members/[A-Za-z0-9]+"
+  - "/members/[A-Za-z0-9]+/ack"
+  - "/members/[A-Za-z0-9]+/override"
+  - "/members/[A-Za-z0-9]+/sub-accounts/new"
+  - "/members/[A-Za-z0-9]+/sub-accounts/confirm"
+  - "/widgets/branch-notice"
+
+# Action types the automation is permitted to perform at all. Anything else
+# (e.g. a hypothetical FILE_DOWNLOAD or OS-level action) is refused outright
+# regardless of route.
+allowed_actions:
+  - navigate
+  - click
+  - fill
+  - select_option
+  - wait_for
+  - extract
+  - assert_checkpoint
+
+# Routes where a POST/state-changing action is classified irreversible and
+# therefore requires explicit confirmation before replay will execute it
+# unattended (see src/safety/risk.py). Read-only navigation to these routes
+# is unaffected.
+irreversible_routes:
+  - "/members/[A-Za-z0-9]+/sub-accounts/confirm"

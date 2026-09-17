@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Member Lookup Result</h2>
+<div class="notice-box">No member found matching ID "{{ member_id }}". Please check the ID and try again.</div>
+<p><a href="/search">Back to search</a></p>
+{% endblock %}

@@ -1,0 +1,488 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "open_member_sub_account",
+  "name": "Open a new sub-account for a member",
+  "description": "Search for a member, open a new sub-account of the given type with the given initial deposit, confirm the irreversible submission, and capture the new account number.",
+  "version": "1.0.0",
+  "target": {
+    "entry_url": "http://127.0.0.1:5055/search",
+    "surface_type": "legacy_web",
+    "fingerprint": {
+      "app_key": "sterling-core-member-services",
+      "vendor_version": "mock-1.0",
+      "landmark_text": "Sterling Core — Member Services Console"
+    },
+    "tenant_id": null
+  },
+  "discovery": {
+    "discovery_run_id": "1789681957-f488c7",
+    "goal_text": "For member {member_id}, open a new {account_type} sub-account with an initial deposit of {initial_deposit}. Complete the confirmation step so the account is actually created, and finish once you see the success screen showing the new account number.",
+    "model": "claude-sonnet-4-5-20250929",
+    "discovered_at": "2026-09-17T21:53:06.667092Z"
+  },
+  "input_params": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "description": "The member ID to open a sub-account for.",
+      "required": true,
+      "sensitive": false,
+      "example": "12345"
+    },
+    {
+      "name": "account_type",
+      "type": "string",
+      "description": "One of Savings, Checking, or CD.",
+      "required": true,
+      "sensitive": false,
+      "example": "Savings"
+    },
+    {
+      "name": "initial_deposit",
+      "type": "number",
+      "description": "Initial deposit amount, must be greater than 0.",
+      "required": true,
+      "sensitive": false,
+      "example": "500"
+    }
+  ],
+  "output_params": [
+    {
+      "name": "account_number",
+      "type": "string",
+      "description": "The newly created sub-account's account number.",
+      "required": true,
+      "sensitive": false,
+      "example": null
+    }
+  ],
+  "steps": [
+    {
+      "id": "step_1",
+      "action": "fill",
+      "description": "Enter the member ID (12345) in the search field to look up the member",
+      "locators": [
+        {
+          "strategy": "label_text",
+          "value": "Member ID",
+          "frame": null,
+          "notes": "Adjacent table-cell label text (legacy layout has no <label for>)."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > input",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "204,120",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": "{{member_id}}",
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "reversible",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_2",
+      "action": "click",
+      "description": "Click the Search button to look up the member with ID 12345",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "button|Search",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > input",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "140,149",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "safe",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_3",
+      "action": "click",
+      "description": "Click the 'View member' link to access member 12345's profile page",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "link|View member",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "text_exact",
+          "value": "View member",
+          "frame": null,
+          "notes": "Exact visible text of a link/button."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > a",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "153,257",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "reversible",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_4",
+      "action": "click",
+      "description": "Click the 'Open Sub-Account' link to start the process of opening a new sub-account",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "link|Open Sub-Account",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "text_exact",
+          "value": "Open Sub-Account",
+          "frame": null,
+          "notes": "Exact visible text of a link/button."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > p:nth-of-type(1) > a",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "78,419",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "reversible",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_5",
+      "action": "select_option",
+      "description": "Select 'Savings' as the account type from the dropdown menu",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "combobox|-- choose --\nSavings\nChecking\nCertificate of Deposit",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "label_text",
+          "value": "Account Type",
+          "frame": null,
+          "notes": "Adjacent table-cell label text (legacy layout has no <label for>)."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > select",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "199,119",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": "{{account_type}}",
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "reversible",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_6",
+      "action": "fill",
+      "description": "Enter the initial deposit amount of 500 in the Initial Deposit field",
+      "locators": [
+        {
+          "strategy": "label_text",
+          "value": "Initial Deposit",
+          "frame": null,
+          "notes": "Adjacent table-cell label text (legacy layout has no <label for>)."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > input",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "218,147",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": "{{initial_deposit}}",
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "reversible",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_7",
+      "action": "click",
+      "description": "Click the Continue button to proceed with opening the sub-account",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "button|Continue",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > table > tbody > tr:nth-of-type(3) > td:nth-of-type(2) > input",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "160,176",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "safe",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_8",
+      "action": "click",
+      "description": "Click 'Confirm and Open Account' button to finalize the creation of the new Savings sub-account",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "button|Confirm and Open Account",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "label_text",
+          "value": "Member",
+          "frame": null,
+          "notes": "Adjacent table-cell label text (legacy layout has no <label for>)."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > input:nth-of-type(3)",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "111,268",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "irreversible",
+      "requires_confirmation": true
+    },
+    {
+      "id": "step_9",
+      "action": "extract",
+      "description": "Extract the newly created sub-account number 'SUB-500006' as the required output",
+      "locators": [
+        {
+          "strategy": "row_value_text",
+          "value": "Account Number",
+          "frame": null,
+          "notes": "Sibling table cell identified by its stable row label, not by its own (dynamic) value."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2)",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "189,167",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": "account_number",
+      "timeout_ms": 5000,
+      "risk": "safe",
+      "requires_confirmation": false
+    }
+  ],
+  "interrupts": [
+    {
+      "id": "session_expired",
+      "description": "The core system ended the session due to inactivity or a forced timeout.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "Your session has expired",
+        "frame": null,
+        "notes": "Session-expiry page text; stable across the app."
+      },
+      "classification": "hard_failure",
+      "outcome_code": "SESSION_EXPIRED",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "member_not_found",
+      "description": "The looked-up member ID does not exist in the core system.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "No member found matching",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "MEMBER_NOT_FOUND",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "permission_denied",
+      "description": "The authenticated operator is not authorized to view this member.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "not authorized to view member",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "PERMISSION_DENIED",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "transient_system_busy",
+      "description": "A transient core-system slowdown/error that resolves on retry.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "temporarily busy",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "recoverable",
+      "outcome_code": "TRANSIENT_RETRYABLE",
+      "dismiss_action": {
+        "strategy": "text_exact",
+        "value": "Retry",
+        "frame": null,
+        "notes": null
+      },
+      "resume_current_step": true,
+      "max_occurrences": 2,
+      "extract": []
+    },
+    {
+      "id": "verification_interstitial",
+      "description": "An unexpected 'additional verification' interstitial before the member record is shown.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "flagged for additional handling review",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "recoverable",
+      "outcome_code": "VERIFICATION_INTERSTITIAL",
+      "dismiss_action": {
+        "strategy": "role_name",
+        "value": "button|Continue",
+        "frame": null,
+        "notes": null
+      },
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "invalid_deposit_amount",
+      "description": "The submitted initial deposit failed server-side validation.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "Initial deposit must be",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "INVALID_DEPOSIT_AMOUNT",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "invalid_account_type",
+      "description": "No (or an invalid) account type was selected for the new sub-account.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "choose a valid account type",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "INVALID_ACCOUNT_TYPE",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    }
+  ],
+  "checkpoint": {
+    "description": "Successfully opened a new Savings sub-account for member 12345 with an initial deposit of $500. The account was confirmed and created with account number SUB-500006.",
+    "detect": {
+      "strategy": "role_name",
+      "value": "heading|Sub-Account Opened",
+      "frame": null,
+      "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "status": "business_outcome",
+  "capability_id": "open_member_sub_account",
+  "outcome_code": "INVALID_DEPOSIT_AMOUNT",
+  "outputs": {},
+  "message": "The submitted initial deposit failed server-side validation.",
+  "failed_step_id": null,
+  "expected": null,
+  "observed": null,
+  "interrupts_fired": [
+    "invalid_deposit_amount"
+  ],
+  "evidence_dir": null,
+  "human_intervention": false
+}

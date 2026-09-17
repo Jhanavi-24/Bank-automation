@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Member Detail</h2>
+<table border="1" cellpadding="6">
+<tr><td>Member ID</td><td>{{ member.member_id }}</td></tr>
+<tr><td>Name</td><td>{{ member.full_name }}</td></tr>
+<tr><td>Savings Balance</td><td>${{ "%.2f"|format(member.savings_balance) }}</td></tr>
+<tr><td>Checking Balance</td><td>${{ "%.2f"|format(member.checking_balance) }}</td></tr>
+</table>
+
+{% if member.sub_accounts %}
+<h3>Sub-Accounts</h3>
+<table border="1" cellpadding="6">
+<tr><th>Account Number</th><th>Type</th><th>Balance</th></tr>
+{% for acct in member.sub_accounts %}
+<tr><td>{{ acct.account_number }}</td><td>{{ acct.account_type }}</td><td>${{ "%.2f"|format(acct.balance) }}</td></tr>
+{% endfor %}
+</table>
+{% endif %}
+
+<p><a href="/members/{{ member.member_id }}/sub-accounts/new">Open Sub-Account</a></p>
+<p><a href="/search">Back to search</a></p>
+
+<!-- Legacy branch-notice widget, embedded via iframe from a separate internal
+     tool. Not part of the task flow -- included to exercise the "surface has
+     iframes" reality without complicating the required goal path. -->
+<p style="font-size:11px;color:#777;">Branch notice widget:</p>
+<iframe src="/widgets/branch-notice" width="300" height="60" style="border:1px solid #999;"></iframe>
+{% endblock %}

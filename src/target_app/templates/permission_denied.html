@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Member Lookup Result</h2>
+<div class="error-box">You are not authorized to view member "{{ member_id }}". This account is outside your assigned portfolio. Contact your supervisor if you believe this is an error.</div>
+<p><a href="/search">Back to search</a></p>
+{% endblock %}

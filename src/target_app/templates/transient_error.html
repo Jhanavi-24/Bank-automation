@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>System Message</h2>
+<div class="error-box">The core system is temporarily busy and could not complete this request. Please retry in a moment.</div>
+<p><a href="/members/{{ member_id }}">Retry</a></p>
+{% endblock %}

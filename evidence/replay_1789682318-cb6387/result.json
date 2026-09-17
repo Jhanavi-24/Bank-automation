@@ -1,0 +1,13 @@
+{
+  "status": "confirmation_required",
+  "capability_id": "open_member_sub_account",
+  "outcome_code": null,
+  "outputs": {},
+  "message": "Step 'step_8' is classified irreversible and requires explicit confirmation (pass --confirm-irreversible) before replay will execute it unattended.",
+  "failed_step_id": "step_8",
+  "expected": null,
+  "observed": null,
+  "interrupts_fired": [],
+  "evidence_dir": null,
+  "human_intervention": false
+}

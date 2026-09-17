@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "capability_id": "open_member_sub_account",
+  "outcome_code": null,
+  "outputs": {
+    "account_number": "SUB-500011"
+  },
+  "message": "Goal reached and checkpoint verified.",
+  "failed_step_id": null,
+  "expected": null,
+  "observed": null,
+  "interrupts_fired": [],
+  "evidence_dir": null,
+  "human_intervention": true
+}

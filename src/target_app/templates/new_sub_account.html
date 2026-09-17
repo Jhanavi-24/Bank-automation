@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Open Sub-Account &mdash; {{ member.full_name }} ({{ member.member_id }})</h2>
+{% if error %}<div class="error-box">{{ error }}</div>{% endif %}
+<form method="post" action="/members/{{ member.member_id }}/sub-accounts/new">
+<table class="field-table">
+<tr><td>Account Type</td>
+<td>
+<select name="account_type">
+<option value="">-- choose --</option>
+<option value="Savings" {% if form.get('account_type')=='Savings' %}selected{% endif %}>Savings</option>
+<option value="Checking" {% if form.get('account_type')=='Checking' %}selected{% endif %}>Checking</option>
+<option value="CD" {% if form.get('account_type')=='CD' %}selected{% endif %}>Certificate of Deposit</option>
+</select>
+</td></tr>
+<tr><td>Initial Deposit</td><td><input type="text" name="initial_deposit" value="{{ form.get('initial_deposit','') }}"></td></tr>
+<tr><td></td><td><input type="submit" value="Continue"></td></tr>
+</table>
+</form>
+<p><a href="/members/{{ member.member_id }}">Cancel</a></p>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Manual Authorization Required</h2>
+<div class="error-box">
+This member record cannot be displayed automatically. A supervisor must authorize access from this
+console before the record can be viewed. This is not an automated step -- authorization must be
+granted by a person.
+</div>
+<form method="post" action="/members/{{ member_id }}/override">
+<input type="submit" value="I have authorized access">
+</form>
+<p><a href="/search">Back to search</a></p>
+{% endblock %}

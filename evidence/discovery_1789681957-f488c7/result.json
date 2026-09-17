@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "capability_id": "open_member_sub_account",
+  "artifact_path": "/home/claude/bank-automation/evidence/discovery_1789681957-f488c7/artifact.json",
+  "outputs_captured": {
+    "account_number": "SUB-500006"
+  },
+  "steps_recorded": 9
+}

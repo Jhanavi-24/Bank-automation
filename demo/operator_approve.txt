@@ -1,0 +1,2 @@
+# Scripted operator approving an irreversible step via the handoff console.
+approve

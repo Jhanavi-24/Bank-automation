@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Member Lookup</h2>
+<form method="post" action="/search">
+<table class="field-table">
+<tr><td>Member ID</td><td><input type="text" name="member_id" value="{{ query or '' }}"></td></tr>
+<tr><td></td><td><input type="submit" value="Search"></td></tr>
+</table>
+</form>
+
+{% if results %}
+<h3>Results</h3>
+<table border="1" cellpadding="6">
+<tr><th>Member ID</th><th>Action</th></tr>
+{% for member_id in results %}
+<tr>
+<td>{{ member_id }}</td>
+<td><a href="/members/{{ member_id }}">View member</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+{% endblock %}

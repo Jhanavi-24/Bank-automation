@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>Operator Sign In</h2>
+{% if error %}<div class="error-box">{{ error }}</div>{% endif %}
+<form method="post" action="/login">
+<table class="field-table">
+<tr><td>Username</td><td><input type="text" name="username"></td></tr>
+<tr><td>Password</td><td><input type="password" name="password"></td></tr>
+<tr><td></td><td><input type="submit" value="Sign In"></td></tr>
+</table>
+</form>
+{% endblock %}

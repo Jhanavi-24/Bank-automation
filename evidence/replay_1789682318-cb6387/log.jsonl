@@ -1,0 +1,17 @@
+{"seq": 1, "ts": 1789682318.5833123, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "replay_start", "capability_id": "open_member_sub_account", "params": {"member_id": "12345", "account_type": "CD", "initial_deposit": "1000"}}
+{"seq": 2, "ts": 1789682318.5835202, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_1", "action": "fill", "description": "Enter the member ID (12345) in the search field to look up the member"}
+{"seq": 3, "ts": 1789682318.622962, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_ok", "step_id": "step_1"}
+{"seq": 4, "ts": 1789682318.623058, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_2", "action": "click", "description": "Click the Search button to look up the member with ID 12345"}
+{"seq": 5, "ts": 1789682318.694783, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_ok", "step_id": "step_2"}
+{"seq": 6, "ts": 1789682318.6948664, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_3", "action": "click", "description": "Click the 'View member' link to access member 12345's profile page"}
+{"seq": 7, "ts": 1789682318.7784214, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_ok", "step_id": "step_3"}
+{"seq": 8, "ts": 1789682318.7785525, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_4", "action": "click", "description": "Click the 'Open Sub-Account' link to start the process of opening a new sub-account"}
+{"seq": 9, "ts": 1789682318.8552816, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_ok", "step_id": "step_4"}
+{"seq": 10, "ts": 1789682318.8553607, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_5", "action": "select_option", "description": "Select 'Savings' as the account type from the dropdown menu"}
+{"seq": 11, "ts": 1789682323.8827085, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_ok", "step_id": "step_5"}
+{"seq": 12, "ts": 1789682323.8831933, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_6", "action": "fill", "description": "Enter the initial deposit amount of 500 in the Initial Deposit field"}
+{"seq": 13, "ts": 1789682323.8969522, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_ok", "step_id": "step_6"}
+{"seq": 14, "ts": 1789682323.8970428, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_7", "action": "click", "description": "Click the Continue button to proceed with opening the sub-account"}
+{"seq": 15, "ts": 1789682323.9620016, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_ok", "step_id": "step_7"}
+{"seq": 16, "ts": 1789682323.9620829, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "step_start", "step_id": "step_8", "action": "click", "description": "Click 'Confirm and Open Account' button to finalize the creation of the new Savings sub-account"}
+{"seq": 17, "ts": 1789682323.9857016, "run_id": "1789682318-cb6387", "run_type": "replay", "event": "confirmation_required", "step_id": "step_8", "risk": "irreversible"}
