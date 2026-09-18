@@ -1,0 +1,304 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "lookup_member_balance",
+  "name": "Look up member and read savings balance",
+  "description": "Search for a member by ID and read their current savings balance from the member detail page.",
+  "version": "1.0.0",
+  "target": {
+    "entry_url": "http://127.0.0.1:5055/search",
+    "surface_type": "legacy_web",
+    "fingerprint": {
+      "app_key": "sterling-core-member-services",
+      "vendor_version": "mock-1.0",
+      "landmark_text": "Sterling Core — Member Services Console"
+    },
+    "tenant_id": null
+  },
+  "discovery": {
+    "discovery_run_id": "1789749115-f92958",
+    "goal_text": "Look up member {member_id} and read their current savings balance.",
+    "model": "claude-sonnet-4-5-20250929",
+    "discovered_at": "2026-09-18T16:32:10.299346Z"
+  },
+  "input_params": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "description": "The member ID to look up.",
+      "required": true,
+      "sensitive": false,
+      "example": "12345"
+    }
+  ],
+  "output_params": [
+    {
+      "name": "savings_balance",
+      "type": "string",
+      "description": "The member's current savings balance as displayed on the page.",
+      "required": true,
+      "sensitive": false,
+      "example": null
+    }
+  ],
+  "steps": [
+    {
+      "id": "step_1",
+      "action": "fill",
+      "description": "I need to enter the member ID 12345 into the Member ID textbox to look up the member's information.",
+      "locators": [
+        {
+          "strategy": "label_text",
+          "value": "Member ID",
+          "frame": null,
+          "notes": "Adjacent table-cell label text (legacy layout has no <label for>)."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > input",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "188,120",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": "{{member_id}}",
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "reversible",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_2",
+      "action": "click",
+      "description": "Now I need to click the Search button to submit the member ID lookup for member 12345.",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "button|Search",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > form > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > input",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "140,149",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "safe",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_3",
+      "action": "click",
+      "description": "The search successfully returned member 12345 in the results. Now I need to click the \"View member\" link to access the member's detailed information including their savings balance.",
+      "locators": [
+        {
+          "strategy": "role_name",
+          "value": "link|View member",
+          "frame": null,
+          "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+        },
+        {
+          "strategy": "text_exact",
+          "value": "View member",
+          "frame": null,
+          "notes": "Exact visible text of a link/button."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > a",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "153,257",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": null,
+      "timeout_ms": 5000,
+      "risk": "reversible",
+      "requires_confirmation": false
+    },
+    {
+      "id": "step_4",
+      "action": "extract",
+      "description": "I have successfully navigated to the member detail page for member 12345, and I can see the Savings Balance displayed as \"$8214.53\". I need to extract this value as the required output.",
+      "locators": [
+        {
+          "strategy": "row_value_text",
+          "value": "Savings Balance",
+          "frame": null,
+          "notes": "Sibling table cell identified by its stable row label, not by its own (dynamic) value."
+        },
+        {
+          "strategy": "css",
+          "value": "body > table:nth-of-type(2) > tbody > tr > td > table > tbody > tr:nth-of-type(3) > td:nth-of-type(2)",
+          "frame": null,
+          "notes": "Structural CSS path -- breaks if layout changes; kept as a fallback only."
+        },
+        {
+          "strategy": "coordinates",
+          "value": "198,196",
+          "frame": null,
+          "notes": "Absolute viewport coordinates -- last resort, does not survive layout changes."
+        }
+      ],
+      "value_template": null,
+      "extract_as": "savings_balance",
+      "timeout_ms": 5000,
+      "risk": "safe",
+      "requires_confirmation": false
+    }
+  ],
+  "interrupts": [
+    {
+      "id": "session_expired",
+      "description": "The core system ended the session due to inactivity or a forced timeout.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "Your session has expired",
+        "frame": null,
+        "notes": "Session-expiry page text; stable across the app."
+      },
+      "classification": "hard_failure",
+      "outcome_code": "SESSION_EXPIRED",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "member_not_found",
+      "description": "The looked-up member ID does not exist in the core system.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "No member found matching",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "MEMBER_NOT_FOUND",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "permission_denied",
+      "description": "The authenticated operator is not authorized to view this member.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "not authorized to view member",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "PERMISSION_DENIED",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "transient_system_busy",
+      "description": "A transient core-system slowdown/error that resolves on retry.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "temporarily busy",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "recoverable",
+      "outcome_code": "TRANSIENT_RETRYABLE",
+      "dismiss_action": {
+        "strategy": "text_exact",
+        "value": "Retry",
+        "frame": null,
+        "notes": null
+      },
+      "resume_current_step": true,
+      "max_occurrences": 2,
+      "extract": []
+    },
+    {
+      "id": "verification_interstitial",
+      "description": "An unexpected 'additional verification' interstitial before the member record is shown.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "flagged for additional handling review",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "recoverable",
+      "outcome_code": "VERIFICATION_INTERSTITIAL",
+      "dismiss_action": {
+        "strategy": "role_name",
+        "value": "button|Continue",
+        "frame": null,
+        "notes": null
+      },
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "invalid_deposit_amount",
+      "description": "The submitted initial deposit failed server-side validation.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "Initial deposit must be",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "INVALID_DEPOSIT_AMOUNT",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    },
+    {
+      "id": "invalid_account_type",
+      "description": "No (or an invalid) account type was selected for the new sub-account.",
+      "detect": {
+        "strategy": "text_contains",
+        "value": "choose a valid account type",
+        "frame": null,
+        "notes": null
+      },
+      "classification": "business_outcome",
+      "outcome_code": "INVALID_ACCOUNT_TYPE",
+      "dismiss_action": null,
+      "resume_current_step": true,
+      "max_occurrences": 1,
+      "extract": []
+    }
+  ],
+  "checkpoint": {
+    "description": "Successfully looked up member 12345 and extracted their savings balance of $8214.53. The \"Member Detail\" heading confirms we reached the correct page state where the member's account information is displayed.",
+    "detect": {
+      "strategy": "role_name",
+      "value": "heading|Member Detail",
+      "frame": null,
+      "notes": "ARIA role + accessible name; survives markup/DOM restructuring."
+    }
+  }
+}

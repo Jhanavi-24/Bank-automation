@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "capability_id": "lookup_member_balance",
+  "artifact_path": "/Users/jhanaviputcha/Desktop/bank-automation/evidence/discovery_1789749115-f92958/artifact.json",
+  "outputs_captured": {
+    "savings_balance": "$8214.53"
+  },
+  "steps_recorded": 4
+}

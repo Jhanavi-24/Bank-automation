@@ -31,25 +31,25 @@ heterogeneity/multi-tenant story, escalation & handoff, safety, cuts). This file
 Requires Python 3.11+.
 
 ```bash
-pip install -r requirements.txt
-python -m playwright install chromium   # skip if already installed on your system
+python3 -m pip install -r requirements.txt
+python3 -m playwright install chromium   # skip if already installed on your system
 ```
 
 Start the mock bank app (leave running in its own terminal):
 
 ```bash
-python -m src.target_app.app
+python3 -m src.target_app.app
 # -> http://127.0.0.1:5055 (demo login: operator / demo-pass-1234)
 ```
 
 ### Running without live services
 
 Everything except the discovery run works with no external network access -- `src/target_app` is fully
-self-contained. **Replay never calls an LLM**, so `pytest tests/test_integration.py` and
-`python -m src.cli replay ...` against the committed `artifacts/*.json` work offline once the app above
+self-contained. **Replay never calls an LLM**, so `python3 -m pytest tests/test_integration.py` and
+`python3 -m src.cli replay ...` against the committed `artifacts/*.json` work offline once the app above
 is running.
 
-Only `python -m src.cli discover ...` needs an LLM. Export a key first:
+Only `python3 -m src.cli discover ...` needs an LLM. Export a key first:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
@@ -61,35 +61,35 @@ With the app running (above), from the repo root:
 
 ```bash
 # 1. Run a real LLM-driven discovery and save the resulting artifact.
-python -m src.cli discover --capability lookup_member_balance --param member_id=12345
+python3 -m src.cli discover --capability lookup_member_balance --param member_id=12345
 
 # 2. Replay it deterministically -- no LLM involved.
-python -m src.cli replay --capability lookup_member_balance --param member_id=12345
+python3 -m src.cli replay --capability lookup_member_balance --param member_id=12345
 
 # 3. Replay the *same* artifact against a different member -- proves it's a reusable
 #    capability, not a hardcoded script.
-python -m src.cli replay --capability lookup_member_balance --param member_id=12346
+python3 -m src.cli replay --capability lookup_member_balance --param member_id=12346
 
 # 4. Replay against a business outcome (no such member) and a recoverable transient error.
-python -m src.cli replay --capability lookup_member_balance --param member_id=00000
-python -m src.cli replay --capability lookup_member_balance --param member_id=50000
+python3 -m src.cli replay --capability lookup_member_balance --param member_id=00000
+python3 -m src.cli replay --capability lookup_member_balance --param member_id=50000
 
 # 5. Replay against a genuinely unhandled state -- triggers human handoff on the SAME
 #    live session. (member_id=66666 hits a "supervisor override" gate that is
 #    deliberately NOT in the interrupt library.)
-python -m src.cli replay --capability lookup_member_balance --param member_id=66666 \
+python3 -m src.cli replay --capability lookup_member_balance --param member_id=66666 \
     --handoff interactive
 #   (or --handoff scripted --operator-script demo/operator_override.txt for a non-interactive run)
 
 # 6. Discover and replay the second, higher-stakes capability (irreversible action).
-python -m src.cli discover --capability open_member_sub_account \
+python3 -m src.cli discover --capability open_member_sub_account \
     --param member_id=12345 --param account_type=Savings --param initial_deposit=500
 
-python -m src.cli replay --capability open_member_sub_account \
+python3 -m src.cli replay --capability open_member_sub_account \
     --param member_id=12346 --param account_type=Checking --param initial_deposit=250
 #   -> refused: "confirmation_required" (irreversible step, not confirmed)
 
-python -m src.cli replay --capability open_member_sub_account \
+python3 -m src.cli replay --capability open_member_sub_account \
     --param member_id=12346 --param account_type=Checking --param initial_deposit=250 \
     --confirm-irreversible
 #   -> succeeds, returns the new account_number
@@ -116,7 +116,7 @@ REPORT.md section 3 is reproducible on demand instead of waiting for it to happe
 ## Tests
 
 ```bash
-pytest tests/                 # unit tests always run; integration tests skip if the app isn't up
+python3 -m pytest tests/                 # unit tests always run; integration tests skip if the app isn't up
 ```
 
 ## Configuration

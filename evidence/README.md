@@ -15,6 +15,11 @@ Each subdirectory is one run (`discovery_<id>` or `replay_<id>`), containing:
   ... with an initial deposit of 500 ... complete the confirmation step." 9 steps recorded; the confirm
   click was automatically classified `irreversible` / `requires_confirmation=True` by the safety
   allowlist (see src/safety/allowlist.py `irreversible_routes`), not hinted to the model.
+- `discovery_1789749115-f92958` -- **lookup_member_balance, independent re-run** of the same goal on a
+  separate day. Included as a reproducibility signal: the model independently recorded the same 4-step
+  flow and chose the same "Member Detail" heading checkpoint. `artifacts/lookup_member_balance.json` is
+  the artifact from the *first* run (`cf2044`) -- that's the one every replay below was executed against,
+  so the discovery -> artifact -> replay chain in this directory is consistent end to end.
 
 ## Replay runs (deterministic, no LLM) -- using the artifacts above
 
