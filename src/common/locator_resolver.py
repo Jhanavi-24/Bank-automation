@@ -65,6 +65,22 @@ def _try_one(page: Page, locator: Locator, timeout_ms: int):
         candidate.first.wait_for(state="visible", timeout=timeout_ms)
         return candidate.first, None
 
+    if locator.strategy == LocatorStrategy.TABLE_CELL:
+        row_index_str, column_header = locator.value.split("|", 1)
+        row_index = int(row_index_str)  # 1-based, among rows containing <td> (data rows)
+        safe_header = column_header.replace('"', "")
+        # Locate the <th> to find which column position it occupies (works regardless of
+        # how many columns the table has, unlike ROW_VALUE_TEXT -- see schema.py's
+        # LocatorStrategy.TABLE_CELL docstring for why that one isn't safe here).
+        header_xpath = f'xpath=//tr[th[normalize-space()="{safe_header}"]]/th[normalize-space()="{safe_header}"]'
+        header_cell = scope.locator(header_xpath).first
+        header_cell.wait_for(state="visible", timeout=timeout_ms)
+        col_position = header_cell.evaluate("el => Array.from(el.parentElement.children).indexOf(el) + 1")
+        data_rows = scope.locator(f'xpath=//tr[th[normalize-space()="{safe_header}"]]/ancestor::table[1]//tr[td]')
+        candidate = data_rows.nth(row_index - 1).locator(f"xpath=./td[{col_position}]")
+        candidate.first.wait_for(state="visible", timeout=timeout_ms)
+        return candidate.first, None
+
     if locator.strategy == LocatorStrategy.TEXT_EXACT:
         candidate = scope.get_by_text(locator.value, exact=True)
         candidate.first.wait_for(state="visible", timeout=timeout_ms)

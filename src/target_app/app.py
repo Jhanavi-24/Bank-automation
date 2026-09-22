@@ -20,6 +20,10 @@ from . import data
 
 DEMO_USERNAME = "operator"
 DEMO_PASSWORD = "demo-pass-1234"  # dummy demo credential, not a real secret
+# A supervisor authorizing the member-66666 override gate must actually enter this code --
+# the earlier version just accepted any click, which wasn't really "requires a person to decide,"
+# it was "requires a person to be present." Dummy demo credential, not a real secret.
+SUPERVISOR_OVERRIDE_CODE = "sup-override-9911"
 
 
 def create_app() -> Flask:
@@ -129,6 +133,12 @@ def create_app() -> Flask:
     def member_override(member_id: str):
         if not require_login():
             return redirect(url_for("login"))
+        code = request.form.get("override_code", "")
+        if code != SUPERVISOR_OVERRIDE_CODE:
+            return render_template(
+                "supervisor_override.html", member_id=member_id,
+                error="Invalid override code.",
+            ), 401
         session[f"override_{member_id}"] = True
         return redirect(url_for("member_detail", member_id=member_id))
 

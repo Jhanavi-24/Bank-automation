@@ -106,12 +106,14 @@ REPORT.md section 3 is reproducible on demand instead of waiting for it to happe
 | Member ID | Behavior |
 |---|---|
 | `12345`, `12346`, `12347` | Normal members with balances |
+| `12348`–`12359` | Additional synthetic roster (varied names/balances/tiers/tenure, a couple with pre-existing sub-accounts) -- richer demo data, no special behavior |
+| `12345`–`12359` | All of these also carry realistic read-only detail: transaction history, linked cards, beneficiaries (where applicable), and alert preferences -- presentational only, no new automation capability |
 | `00000` | Business outcome: member not found |
 | `40403` | Business outcome: permission denied |
 | `50000` | Recoverable: "system busy" on first load, succeeds on retry |
 | `90001` | Recoverable: unexpected "additional verification" interstitial |
 | `77777` | Hard failure: simulated session expiry |
-| `66666` | Deliberately **unhandled**: needs a supervisor to click "I have authorized access" -- not in the interrupt library, so it always escalates to a human |
+| `66666` | Deliberately **unhandled**: needs a supervisor to enter the override code (`sup-override-9911`, a dummy demo credential -- see `SUPERVISOR_OVERRIDE_CODE` in `src/target_app/app.py`) and click "I have authorized access" -- not in the interrupt library, so it always escalates to a human |
 
 ## Tests
 
@@ -125,6 +127,19 @@ python3 -m pytest tests/                 # unit tests always run; integration te
   routes are classified irreversible). See REPORT.md section 6.
 - `ANTHROPIC_MODEL` (env var, optional) -- overrides the discovery agent's model
   (default `claude-sonnet-4-5-20250929`).
+- Escalation notification (env vars, all optional -- see REPORT.md section 5 and
+  `src/handoff/notifier.py`): when `HandoffController.request_intervention` fires, it sends an actual
+  email (or, via a carrier's email-to-SMS gateway, a text) rather than only printing to the terminal.
+  None of these set? The demo runs fully offline -- the notice is written to
+  `evidence/<run>/notifications/<step_id>.txt` instead, and that file is what a reviewer without SMTP
+  access should look at.
+  - `ESCALATION_EMAIL_TO` -- recipient. For a real text message instead of email, set this to your
+    carrier's SMS gateway address, e.g. `5551234567@vtext.com` (Verizon), `@txt.att.net` (AT&T),
+    `@tmomail.net` (T-Mobile) -- same code path, no third-party SMS API needed.
+  - `ESCALATION_SMTP_HOST` / `ESCALATION_SMTP_PORT` (default `587`) -- your SMTP provider.
+  - `ESCALATION_SMTP_USER` / `ESCALATION_SMTP_PASSWORD` -- SMTP auth, e.g. a Gmail app password.
+  - `ESCALATION_EMAIL_FROM` (default `automation@sterling-core.local`), `ESCALATION_SMTP_USE_TLS`
+    (default `true`).
 
 ## What's mocked / cut
 

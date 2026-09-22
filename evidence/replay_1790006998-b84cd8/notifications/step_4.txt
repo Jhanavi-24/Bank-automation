@@ -1,0 +1,9 @@
+Subject: [Sterling Core Automation] Human intervention needed: lookup_member_balance / step_4
+
+Capability : lookup_member_balance
+Step       : step_4
+Reason     : Step 'step_4' failed and no known interrupt matched the current page: EXTRACT is not supported via coordinate-only locators.
+Current URL: http://127.0.0.1:5055/members/66666
+Screenshot : /Users/jhanaviputcha/Desktop/bank-automation/evidence/replay_1790006998-b84cd8/screenshots/009_escalation_step_4.png
+
+To take over: attach to the operator console this run is waiting on (the terminal running `python -m src.cli replay ... --handoff interactive`), or resolve it there directly.

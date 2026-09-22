@@ -4,10 +4,14 @@
 <div class="error-box">
 This member record cannot be displayed automatically. A supervisor must authorize access from this
 console before the record can be viewed. This is not an automated step -- authorization must be
-granted by a person.
+granted by a person, and requires that person's override code.
 </div>
+{% if error %}<div class="error-box">{{ error }}</div>{% endif %}
 <form method="post" action="/members/{{ member_id }}/override">
-<input type="submit" value="I have authorized access">
+<table border="1" cellpadding="6" class="field-table">
+<tr><td>Override Code</td><td><input type="password" name="override_code" autocomplete="off"></td></tr>
+<tr><td></td><td><input type="submit" value="I have authorized access"></td></tr>
+</table>
 </form>
 <p><a href="/search">Back to search</a></p>
 {% endblock %}

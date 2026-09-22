@@ -6,6 +6,8 @@
 <tr><td>Name</td><td>{{ member.full_name }}</td></tr>
 <tr><td>Savings Balance</td><td>${{ "%.2f"|format(member.savings_balance) }}</td></tr>
 <tr><td>Checking Balance</td><td>${{ "%.2f"|format(member.checking_balance) }}</td></tr>
+<tr><td>Membership Tier</td><td>{{ member.tier }}</td></tr>
+<tr><td>Member Since</td><td>{{ member.member_since }}</td></tr>
 </table>
 
 {% if member.sub_accounts %}
@@ -17,6 +19,60 @@
 {% endfor %}
 </table>
 {% endif %}
+
+{% if member.transactions %}
+<h3>Recent Transactions</h3>
+<table border="1" cellpadding="6">
+<tr><th>Date</th><th>Description</th><th>Amount</th></tr>
+{% for txn in member.transactions %}
+<tr>
+<td>{{ txn.date }}</td>
+<td>{{ txn.description }}</td>
+<td style="color: {{ 'green' if txn.amount >= 0 else '#a00' }};">
+{{ "+" if txn.amount >= 0 else "-" }}${{ "%.2f"|format(txn.amount|abs) }}
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if member.cards %}
+<h3>Linked Cards</h3>
+<table border="1" cellpadding="6">
+<tr><th>Card</th><th>Network</th><th>Type</th><th>Status</th></tr>
+{% for card in member.cards %}
+<tr>
+<td>&bull;&bull;&bull;&bull; {{ card.last4 }}</td>
+<td>{{ card.network }}</td>
+<td>{{ card.card_type }}</td>
+<td style="color: {{ 'green' if card.status == 'Active' else '#a00' }};">{{ card.status }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if member.beneficiaries %}
+<h3>Beneficiaries</h3>
+<table border="1" cellpadding="6">
+<tr><th>Name</th><th>Relationship</th><th>Account</th></tr>
+{% for b in member.beneficiaries %}
+<tr><td>{{ b.name }}</td><td>{{ b.relationship }}</td><td>&bull;&bull;&bull;&bull; {{ b.account_last4 }}</td></tr>
+{% endfor %}
+</table>
+{% endif %}
+
+<h3>Alert Preferences</h3>
+<table border="1" cellpadding="6">
+<tr><td>Low Balance Alert</td><td>
+{% if member.alert_preferences.low_balance_threshold is not none %}
+Enabled -- notify below ${{ "%.2f"|format(member.alert_preferences.low_balance_threshold) }}
+{% else %}
+Disabled
+{% endif %}
+</td></tr>
+<tr><td>Large Transaction Alerts</td><td>{{ "Enabled" if member.alert_preferences.large_transaction_alerts else "Disabled" }}</td></tr>
+<tr><td>Paperless Statements</td><td>{{ "Yes" if member.alert_preferences.paperless_statements else "No -- mailed" }}</td></tr>
+</table>
 
 <p><a href="/members/{{ member.member_id }}/sub-accounts/new">Open Sub-Account</a></p>
 <p><a href="/search">Back to search</a></p>

@@ -1,12 +1,29 @@
 {% extends "base.html" %}
 {% block body %}
-<h2>Operator Sign In</h2>
-{% if error %}<div class="error-box">{{ error }}</div>{% endif %}
-<form method="post" action="/login">
-<table class="field-table">
-<tr><td>Username</td><td><input type="text" name="username"></td></tr>
-<tr><td>Password</td><td><input type="password" name="password"></td></tr>
-<tr><td></td><td><input type="submit" value="Sign In"></td></tr>
-</table>
-</form>
+<div class="login-shell">
+  <div class="login-brand">
+    <h1>Sterling Core Financial</h1>
+    <div class="tagline">Member Services Console &mdash; Internal Operator Access</div>
+    <p class="meta-line">Environment: <strong>Production Mirror (Training)</strong></p>
+    <p class="meta-line">Region: US-EAST &middot; Build 4.12.0</p>
+    <div class="system-status">All core systems operational</div>
+    <div class="security-notice">
+      This system is restricted to authorized Sterling Core personnel. Access attempts, including
+      failed sign-ins, are logged and reviewed. Unauthorized access is prohibited and may be subject
+      to disciplinary action and prosecution under applicable law.
+    </div>
+  </div>
+  <div class="login-panel">
+    <h2>Operator Sign In</h2>
+    {% if error %}<div class="error-box">{{ error }}</div>{% endif %}
+    <form method="post" action="/login">
+    <table class="field-table">
+    <tr><td>Username</td><td><input type="text" name="username" autocomplete="username"></td></tr>
+    <tr><td>Password</td><td><input type="password" name="password" autocomplete="current-password"></td></tr>
+    <tr><td></td><td><input type="submit" value="Sign In"></td></tr>
+    </table>
+    </form>
+    <p class="meta-line"><a href="#">Forgot password?</a> &middot; <a href="#">Request access</a></p>
+  </div>
+</div>
 {% endblock %}

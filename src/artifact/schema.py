@@ -47,6 +47,12 @@ class LocatorStrategy(str, Enum):
     ROLE_NAME = "role_name"        # ARIA role + accessible name (e.g. button "Search")
     LABEL_TEXT = "label_text"      # associated <label> text for a form field (row-label -> input/select/textarea)
     ROW_VALUE_TEXT = "row_value_text"  # row-label -> the *other* table cell holding a (dynamic) value to read
+    # row_index (1-based, among data rows) + <th> column header text -> that cell. Unlike
+    # ROW_VALUE_TEXT (built for exactly 2 columns: label cell + one other cell), this is the
+    # correct strategy for a real multi-column data table (3+ columns with a <th> header row) --
+    # see REPORT.md section 3 bug #3 for why ROW_VALUE_TEXT silently resolves to the wrong
+    # column there.
+    TABLE_CELL = "table_cell"
     TEXT_EXACT = "text_exact"      # exact visible text content
     TEXT_CONTAINS = "text_contains"  # substring match -- used for messages with dynamic content
     CSS = "css"                    # structural CSS path -- last resort before coordinates
@@ -60,10 +66,11 @@ LOCATOR_ROBUSTNESS_RANK = {
     LocatorStrategy.ROLE_NAME: 1,
     LocatorStrategy.LABEL_TEXT: 2,
     LocatorStrategy.ROW_VALUE_TEXT: 3,
-    LocatorStrategy.TEXT_EXACT: 4,
-    LocatorStrategy.TEXT_CONTAINS: 5,
-    LocatorStrategy.CSS: 6,
-    LocatorStrategy.COORDINATES: 7,
+    LocatorStrategy.TABLE_CELL: 4,
+    LocatorStrategy.TEXT_EXACT: 5,
+    LocatorStrategy.TEXT_CONTAINS: 6,
+    LocatorStrategy.CSS: 7,
+    LocatorStrategy.COORDINATES: 8,
 }
 
 

@@ -37,9 +37,12 @@ gating and human-approval path.
 An artifact (`src/artifact/schema.py`) is not a step list -- it's a callable contract:
 
 - **Steps** carry a *ranked list* of candidate locators (`TEST_ID > ROLE_NAME > LABEL_TEXT >
-  ROW_VALUE_TEXT > TEXT_EXACT > TEXT_CONTAINS > CSS > COORDINATES`), not one selector. Replay tries each
-  in order and records which one worked. This is deliberately the same shape a code reviewer would want:
-  "what's the best way to find this control, and what do we fall back to if the app changes slightly."
+  ROW_VALUE_TEXT > TABLE_CELL > TEXT_EXACT > TEXT_CONTAINS > CSS > COORDINATES`), not one selector. Replay
+  tries each in order and records which one worked. This is deliberately the same shape a code reviewer
+  would want: "what's the best way to find this control, and what do we fall back to if the app changes
+  slightly." `TABLE_CELL` (row position + `<th>` column header) was added after a real bug -- see section 3
+  bug #3 -- exposed that `ROW_VALUE_TEXT`'s "the row's other cell" is only unambiguous for exactly two
+  columns.
 - **Values are templated** (`{{member_id}}`), never literal. The discovery agent is prompted to tag which
   typed/selected values correspond to declared input parameters; nothing about *this run's* concrete data
   is baked into the artifact.
@@ -75,7 +78,7 @@ classify into the same three buckets (`business_outcome` / `recoverable` / `hard
 one gets a bounded number of dismiss-and-retry attempts (`max_occurrences`), then escalates to hard
 failure rather than looping forever.
 
-**Two real bugs, found by testing against the live app before trusting the design on paper:**
+**Three real bugs, found by testing against the live app before trusting the design on paper:**
 
 1. The first real discovery run picked `role_name: cell|"$8214.53"` as its success checkpoint -- the
    balance's own text. That only proves success for *this* member; replaying for a different member ID,
@@ -90,10 +93,24 @@ failure rather than looping forever.
    irreversible steps resolve with `allow_coordinates=False` (`src/common/locator_resolver.resolve`,
    `src/replay/engine._execute_step`). An irreversible action must never fire off a coordinate guess with
    no identity check behind it -- that's a safety property, not just a correctness one.
+3. While experimenting with a third capability against a genuine 3-column data table (Date | Description |
+   Amount -- ultimately not part of this submission, see Cuts), a latent bug in `ROW_VALUE_TEXT` itself
+   surfaced: its XPath means "the row's other `<td>`, whichever one isn't the label" -- unambiguous for
+   exactly two columns, but for three or more it silently resolves to the *first* non-label cell every
+   time. A real discovery run extracted "Dividend Payment" (the Description column) when the target was
+   the Amount column, twice in a row, because `ROW_VALUE_TEXT` never raised an error -- it just returned
+   the wrong cell with full confidence. Fix: a new `LocatorStrategy.TABLE_CELL` (`row index among data
+   rows` + `<th>` column header text) identifies a cell by actual column identity instead of "not the
+   label," and is used in place of `ROW_VALUE_TEXT` whenever a table has a real header row
+   (`src/common/browser_surface.py`, `src/common/locator_resolver.py`). Locked in by
+   `tests/test_locator_resolver.py` against the live table. Both submitted capabilities are unaffected by
+   this change either way -- neither's extraction targets a `<th>`-headed table -- but it's a real
+   robustness fix to the shared targeting layer both of them depend on, kept in for that reason.
 
-Both are documented where they were fixed rather than papered over, because they're the actual argument
-for why this project builds its own mock app with reproducible trigger conditions instead of hand-waving
-about error handling: the bugs only surfaced by actually running replay against real runtime states.
+All three are documented where they were fixed rather than papered over, because they're the actual
+argument for why this project builds its own mock app with reproducible trigger conditions instead of
+hand-waving about error handling: the bugs only surfaced by actually running discovery/replay against real
+runtime states.
 
 ## 4. Heterogeneity & multi-tenant
 
@@ -133,6 +150,17 @@ continue"; `approve` means "go ahead and run the automated step now"; `deny` sto
 intentionally the minimal-but-real version the brief scopes for -- not a co-browsing console -- but the
 control-transfer model (same session, explicit state, logged actions, resumable) is the real part, and a
 web-based console would sit behind the identical `HandoffController` API.
+
+**Routing the request to an actual human, not just a terminal.** The brief's phrase is "route an
+intervention request to a human operator" -- a `print()` only reaches someone already watching that
+exact terminal. `src/handoff/notifier.py` sends a real email (SMTP) when `request_intervention` fires,
+or, pointed at a carrier's email-to-SMS gateway (`ESCALATION_EMAIL_TO=5551234567@vtext.com`), a real text
+message, with zero paid third-party API and no credential committed to the repo (config is env-var only;
+see README "Configuration"). Nothing configured -- the default, so the demo needs no external
+services -- and the exact notice that would have been sent is written to
+`evidence/<run>/notifications/<step_id>.txt` instead, which is what `evidence/README.md` points reviewers
+at. An SMTP failure falls back to that same file rather than crashing the run it's trying to report on --
+a notification is enrichment, not a dependency the core loop should ever block on.
 
 Two trigger points are wired into `replay.engine`, matching the brief's two escalation cases exactly:
 
@@ -179,6 +207,12 @@ reasons the URL alone doesn't reveal would need to be added to the config explic
 
 ## 7. Cuts
 
+- **A third capability was prototyped, not submitted.** `get_recent_transactions` (read the most recent
+  entry from a member's transaction history) worked end to end after the `TABLE_CELL` fix above, but two
+  capabilities already exercise the interesting problems the brief asks for -- a safe/read capability and
+  an irreversible one -- and the brief is explicit that depth beats breadth ("we do not reward feature
+  breadth"). Kept the bug fix (it strengthens the shared targeting layer both submitted capabilities use);
+  cut the third capability itself.
 - **Operator console is a CLI, not a web UI.** The brief scopes this explicitly ("mock the operator UI if
   needed... make the handoff mechanism and control-transfer model real"). `HandoffController` is UI-agnostic;
   a browser-based console would consume the same `request_intervention` / command API.

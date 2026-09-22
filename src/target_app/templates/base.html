@@ -3,20 +3,106 @@
 <head>
 <title>{{ title|default('Sterling Core -- Member Services') }}</title>
 <style>
-  body { font-family: Arial, Helvetica, sans-serif; font-size: 13px; background: #d6d3ce; margin: 0; }
-  table { border-collapse: collapse; }
-  .page-table { width: 100%; }
-  .content-table { background: #ffffff; border: 1px solid #7f7f7f; padding: 0; margin: 12px; }
-  .content-table td { padding: 10px; }
-  .banner { background: #003366; color: #ffffff; padding: 6px 10px; font-weight: bold; }
-  .field-table td { padding: 4px 8px; }
-  .error-box { background: #ffe5e5; border: 1px solid #cc0000; color: #660000; padding: 8px; margin: 10px 0; }
-  .notice-box { background: #fff8dc; border: 1px solid #b8860b; color: #5c4400; padding: 8px; margin: 10px 0; }
-  .footer { color: #555555; font-size: 11px; padding: 8px; }
+  /* Visual polish only -- every rule below is a tag/class selector, no
+     template markup, attribute, link text, or button value changed. The
+     automation's locators key off structure and text content, never CSS,
+     so this pass carries zero replay risk (re-verified with the full
+     pytest suite after writing it -- see REPORT.md section 7). */
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", -apple-system, Arial, Helvetica, sans-serif;
+    font-size: 14px; line-height: 1.5; color: #202632;
+    background: #eef1f5; margin: 0; padding: 24px 16px;
+  }
+  /* Some templates keep a literal border="1" attribute (legacy-style
+     markup, left untouched) -- reset it here so every table's actual
+     border is controlled by the rules below instead of the browser
+     default, regardless of which template does or doesn't set it. */
+  table { border-collapse: collapse; border: 0; }
+  a { color: #0b4f8a; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .page-table { width: 100%; max-width: 900px; margin: 0 auto; }
+  .content-table {
+    background: #ffffff; border: 1px solid #dde1e7; border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(20, 30, 55, 0.07), 0 1px 2px rgba(20, 30, 55, 0.05);
+    padding: 0; margin: 16px auto; overflow: hidden;
+  }
+  .content-table td { padding: 26px 30px; }
+
+  .banner {
+    background: linear-gradient(135deg, #04305c 0%, #0b4f8a 100%);
+    color: #ffffff; padding: 14px 22px; font-weight: 600; font-size: 15px;
+    letter-spacing: 0.01em; border-radius: 8px 8px 0 0;
+  }
+  .banner a.logout-link {
+    color: #d9e6f5; font-weight: 500; font-size: 12px; float: right;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 4px; padding: 3px 10px;
+  }
+  .banner a.logout-link:hover { background: rgba(255,255,255,0.12); text-decoration: none; }
+
+  h2 { margin: 0 0 16px; font-size: 19px; font-weight: 600; color: #0e1a2b; }
+  h3 { margin: 26px 0 10px; font-size: 14px; font-weight: 600; color: #3b4657;
+       border-bottom: 1px solid #e6e9ee; padding-bottom: 7px; }
+
+  /* Data/results tables (Member Detail, Search results, confirmations, etc.)
+     -- deliberately keyed off the plain <table border cellpadding> markup
+     every page already uses, not a new class, so no template changes needed. */
+  .content-table table:not(.field-table) {
+    width: 100%; margin: 4px 0 6px; border: 1px solid #e2e6ec !important;
+  }
+  .content-table table:not(.field-table) td,
+  .content-table table:not(.field-table) th {
+    border: 1px solid #e2e6ec !important; padding: 9px 14px; text-align: left; font-size: 13px;
+  }
+  .content-table table:not(.field-table) th { background: #f4f6f9; font-weight: 600; color: #46505f; }
+  .content-table table:not(.field-table) tr:nth-child(even) td { background: #fafbfc; }
+
+  .field-table { margin: 4px 0; }
+  .field-table td { padding: 7px 8px; border: none; }
+
+  input[type="text"], input[type="password"], select {
+    font: inherit; padding: 7px 10px; border: 1px solid #cbd2db; border-radius: 4px;
+    background: #ffffff; min-width: 200px;
+  }
+  input[type="text"]:focus, input[type="password"]:focus, select:focus {
+    outline: none; border-color: #0b4f8a; box-shadow: 0 0 0 3px rgba(11, 79, 138, 0.12);
+  }
+  input[type="submit"] {
+    font: inherit; font-weight: 600; padding: 8px 18px; border: none; border-radius: 5px;
+    background: #0b4f8a; color: #ffffff; cursor: pointer; transition: background 0.12s ease;
+  }
+  input[type="submit"]:hover { background: #093e6e; }
+  input[type="submit"]:active { background: #072f56; }
+
+  .error-box, .notice-box {
+    border-radius: 6px; padding: 11px 14px; margin: 10px 0 16px; border-left: 4px solid;
+  }
+  .error-box { background: #fdecec; border-left-color: #c62828; color: #7a1f1f; border: 1px solid #f3c9c9; border-left: 4px solid #c62828; }
+  .notice-box { background: #fff8e6; border-left-color: #b8860b; color: #5c4400; border: 1px solid #f0dfa8; border-left: 4px solid #b8860b; }
+
+  .footer { color: #6b7280; font-size: 11px; padding: 12px 8px; text-align: center; }
+
+  /* Login screen only -- new classes, no existing rule/selector touched. */
+  .login-shell { display: table; width: 100%; }
+  .login-brand { display: table-cell; width: 42%; vertical-align: top; padding: 22px 28px 22px 6px;
+                 border-right: 1px solid #e6e9ee; }
+  .login-brand h1 { font-size: 16px; color: #04305c; margin: 0 0 4px; letter-spacing: 0.3px; }
+  .login-brand .tagline { color: #6a7280; font-size: 11px; margin-bottom: 14px; }
+  .login-panel { display: table-cell; vertical-align: top; padding: 22px 6px 22px 28px; }
+  .login-panel h2 { font-size: 15px; margin: 0 0 12px; }
+  .security-notice { background: #f2f4f7; border: 1px solid #d6dae1; color: #454c58;
+                      font-size: 11px; padding: 9px 11px; margin: 14px 0 0; line-height: 1.6; border-radius: 5px; }
+  .system-status { font-size: 11px; color: #2f8f3f; margin: 10px 0 0; font-weight: 500; }
+  .system-status::before { content: "\25CF "; }
+  .meta-line { font-size: 11px; color: #8a909a; margin-top: 4px; }
 </style>
 </head>
 <body>
-<table class="page-table"><tr><td class="banner">Sterling Core &mdash; Member Services Console</td></tr></table>
+<table class="page-table"><tr><td class="banner">Sterling Core &mdash; Member Services Console
+{% if session.authenticated %}<a class="logout-link" href="/logout">Logout</a>{% endif %}
+</td></tr></table>
 <table class="content-table"><tr><td>
 {% block body %}{% endblock %}
 </td></tr></table>

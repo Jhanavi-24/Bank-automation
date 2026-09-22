@@ -41,6 +41,11 @@ heading or section title. IMPORTANT: never pick an element whose own visible tex
 you just captured with extract_output (e.g. a balance, an account number, a name) -- that text is \
 specific to this one run's data and will not exist when this capability is replayed later with different \
 input parameters. The checkpoint must stay true regardless of which record was looked up.
+- If you extract the wrong element for a declared output (e.g. you captured a label or a neighboring \
+cell instead of the value itself), you do NOT need to escalate or give up: just call extract_output again \
+for the same output_name with the correct index. Only the most recent extraction for a given name is kept \
+-- both right now and later when this recording is replayed -- so correcting yourself this way is always \
+safe, and a mistaken extraction is never unrecoverable.
 - If you get stuck, something looks unsafe or ambiguous, or you cannot find a way forward after a \
 reasonable number of tries, call escalate_to_human with a clear reason rather than guessing wildly.
 - You must call exactly one tool per turn.

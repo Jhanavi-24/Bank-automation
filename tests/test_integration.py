@@ -107,10 +107,24 @@ def test_lookup_unhandled_failure_resolved_via_handoff():
     artifact = _load("lookup_member_balance")
     result = _replay(
         artifact, {"member_id": "66666"}, "_pytest",
-        handoff_mode="scripted", operator_script=["click I have authorized access", "resume"],
+        handoff_mode="scripted",
+        operator_script=["fill Override Code|sup-override-9911", "click I have authorized access", "resume"],
     )
     assert result.status.value == "success"
     assert result.human_intervention is True
+
+
+def test_lookup_supervisor_override_rejects_wrong_code():
+    # A merely-present operator isn't sufficient authorization -- the code
+    # must actually be correct, or the server keeps refusing and replay
+    # eventually gives up rather than silently granting access.
+    artifact = _load("lookup_member_balance")
+    result = _replay(
+        artifact, {"member_id": "66666"}, "_pytest",
+        handoff_mode="scripted",
+        operator_script=["fill Override Code|WRONG-CODE", "click I have authorized access", "resume"] * 3,
+    )
+    assert result.status.value == "hard_failure"
 
 
 def test_subaccount_blocked_without_confirmation():

@@ -67,9 +67,13 @@ def run_discovery(
     param_values: Dict[str, str],
     headless: bool = True,
     max_steps: int = 16,
+    run_id: Optional[str] = None,
 ) -> DiscoveryOutcome:
     allowlist = Allowlist.load(_default_allowlist_path())
-    evidence = EvidenceRecorder(evidence_root, "discovery", secret_values=[DEMO_PASSWORD])
+    # run_id is normally auto-generated (see EvidenceRecorder) -- exposed here so a
+    # caller that needs to know the evidence dir before the run finishes (e.g. to
+    # tail its log live) can pre-assign it.
+    evidence = EvidenceRecorder(evidence_root, "discovery", run_id=run_id, secret_values=[DEMO_PASSWORD])
     evidence.log("discovery_start", capability_id=spec.capability_id, goal=spec.goal_text, params=param_values)
 
     llm = AgentLLM()

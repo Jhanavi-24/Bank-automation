@@ -60,6 +60,35 @@ _COLLECT_JS = r"""
     return null;
   }
 
+  // For a <td> inside a real multi-column data table (one with a <th> header
+  // row -- Recent Transactions, Linked Cards, Sub-Accounts, etc.), rowLabel()
+  // above is ambiguous: every column other than the first collapses to the
+  // same "first other cell" text, so two different columns in the same row
+  // (e.g. Description and Amount) end up with an identical row_label. This
+  // instead identifies the cell by its column's <th> text plus its 1-based
+  // position among data rows, which is unambiguous regardless of column
+  // count. Tables without a <th> row (plain label/value pairs) return nulls
+  // here and keep using rowLabel()/ROW_VALUE_TEXT as before.
+  function tableCellInfo(el) {
+    if (el.tagName.toLowerCase() !== 'td') return { header: null, rowIndex: null };
+    const table = el.closest('table');
+    if (!table) return { header: null, rowIndex: null };
+    const allRows = Array.from(table.rows);
+    const headerRow = allRows.find(r => r.querySelectorAll(':scope > th').length > 0);
+    if (!headerRow) return { header: null, rowIndex: null };
+
+    const headerCells = Array.from(headerRow.querySelectorAll(':scope > th'));
+    const tr = el.closest('tr');
+    const cellsInRow = Array.from(tr.querySelectorAll(':scope > td'));
+    const colIndex = cellsInRow.indexOf(el);
+    const header = (colIndex >= 0 && headerCells[colIndex]) ? headerCells[colIndex].innerText.trim() : null;
+    if (!header) return { header: null, rowIndex: null };
+
+    const dataRows = allRows.filter(r => r !== headerRow && r.querySelectorAll(':scope > td').length > 0);
+    const rowIndex = dataRows.indexOf(tr) + 1; // 1-based; 0 means "not found"
+    return { header, rowIndex: rowIndex > 0 ? rowIndex : null };
+  }
+
   function accessibleName(el) {
     const aria = el.getAttribute('aria-label');
     if (aria) return aria.trim();
@@ -121,12 +150,15 @@ _COLLECT_JS = r"""
     })
     .map(el => {
       const r = el.getBoundingClientRect();
+      const tc = tableCellInfo(el);
       return {
         tag: el.tagName.toLowerCase(),
         type: el.getAttribute('type') || '',
         role: roleOf(el),
         name: accessibleName(el),
         row_label: rowLabel(el),
+        table_column_header: tc.header,
+        table_row_index: tc.rowIndex,
         html_name: el.getAttribute('name') || null,
         test_id: el.getAttribute('data-testid') || el.getAttribute('data-test') || null,
         text: (el.innerText || '').trim().slice(0, 120),
@@ -152,6 +184,8 @@ class ElementInfo:
     css_path: str
     bbox: dict
     frame_selector: Optional[str] = None  # None = main frame
+    table_column_header: Optional[str] = None  # <th> text for this cell's column, if the table has headers
+    table_row_index: Optional[int] = None      # 1-based position among data rows, if table_column_header is set
 
     def candidate_locators(self) -> List[Locator]:
         candidates: List[Locator] = []
@@ -161,6 +195,22 @@ class ElementInfo:
                 notes="Explicit automation attribute (data-testid/data-test).",
             ))
         value_cell_with_stable_label = self.tag in ("td", "th") and self.row_label
+        if self.table_column_header and self.table_row_index and self.tag == "td":
+            # Preferred over ROW_VALUE_TEXT below whenever the table actually has named
+            # columns -- ROW_VALUE_TEXT's "the other cell in this row" is only unambiguous
+            # for exactly two columns. Also implies value_cell_with_stable_label is true
+            # (this IS a dynamic value cell), so the ROLE_NAME candidate above is still
+            # correctly skipped for it.
+            candidates.append(Locator(
+                strategy=LocatorStrategy.TABLE_CELL,
+                value=f"{self.table_row_index}|{self.table_column_header}",
+                frame=self.frame_selector,
+                notes=(
+                    f"Row {self.table_row_index} (by position among data rows) of the "
+                    f"'{self.table_column_header}' column (by its <th> header) -- unambiguous "
+                    "regardless of column count, unlike ROW_VALUE_TEXT."
+                ),
+            ))
         if self.name and not value_cell_with_stable_label:
             # Skipped for a value cell that has a stable row label: this element's
             # "accessible name" IS its own dynamic text (e.g. a balance), which would
@@ -176,12 +226,16 @@ class ElementInfo:
                 strategy=LocatorStrategy.LABEL_TEXT, value=self.row_label, frame=self.frame_selector,
                 notes="Adjacent table-cell label text (legacy layout has no <label for>).",
             ))
-        if self.row_label and self.tag in ("td", "th"):
+        if self.row_label and self.tag in ("td", "th") and not self.table_column_header:
             # This element IS the value cell (e.g. the balance), and self.row_label is the
             # stable label cell next to it (e.g. "Savings Balance"). Recorded this way instead
             # of by the value's own text, this locator keeps working when the value changes
             # (a different member's balance) -- which is the whole point of recording a
             # *reusable* capability rather than one frozen to the discovery-time data.
+            # Skipped whenever table_column_header identified this as a real 3+-column data
+            # table: ROW_VALUE_TEXT's "the other cell in this row" can't tell two non-label
+            # columns apart there, so it would silently resolve to the wrong one (see the
+            # TABLE_CELL candidate above, which replaces it for that case).
             candidates.append(Locator(
                 strategy=LocatorStrategy.ROW_VALUE_TEXT, value=self.row_label, frame=self.frame_selector,
                 notes="Sibling table cell identified by its stable row label, not by its own (dynamic) value.",
@@ -239,6 +293,8 @@ def snapshot(page: Page) -> List[ElementInfo]:
                 css_path=item["css_path"],
                 bbox=item["bbox"],
                 frame_selector=frame_selector,
+                table_column_header=item.get("table_column_header"),
+                table_row_index=item.get("table_row_index"),
             ))
             index += 1
     return elements
@@ -250,5 +306,15 @@ def render_for_llm(elements: List[ElementInfo]) -> str:
     for e in elements:
         label = e.name or e.row_label or e.text or "(unlabeled)"
         frame_note = f" [inside frame {e.frame_selector}]" if e.frame_selector else ""
-        lines.append(f"[{e.index}] {e.role} \"{label}\" <{e.tag}{' type=' + e.input_type if e.input_type else ''}>{frame_note}")
+        # Spelled out explicitly so the model doesn't have to infer column identity from
+        # position in a numbered list alone -- this is exactly the ambiguity that caused a
+        # real extraction bug (see REPORT.md section 3, bug #3).
+        table_note = (
+            f" [row {e.table_row_index}, column \"{e.table_column_header}\"]"
+            if e.table_column_header else ""
+        )
+        lines.append(
+            f"[{e.index}] {e.role} \"{label}\" <{e.tag}{' type=' + e.input_type if e.input_type else ''}>"
+            f"{table_note}{frame_note}"
+        )
     return "\n".join(lines) if lines else "(no interactive elements detected)"

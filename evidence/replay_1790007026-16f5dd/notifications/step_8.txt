@@ -1,0 +1,9 @@
+Subject: [Sterling Core Automation] Human intervention needed: open_member_sub_account / step_8
+
+Capability : open_member_sub_account
+Step       : step_8
+Reason     : Step 'step_8' is irreversible (Click 'Confirm and Open Account' button to finalize the creation of the new Savings sub-account) and needs human sign-off.
+Current URL: http://127.0.0.1:5055/members/12346/sub-accounts/new
+Screenshot : /Users/jhanaviputcha/Desktop/bank-automation/evidence/replay_1790007026-16f5dd/screenshots/017_escalation_step_8.png
+
+To take over: attach to the operator console this run is waiting on (the terminal running `python -m src.cli replay ... --handoff interactive`), or resolve it there directly.

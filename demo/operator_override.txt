@@ -2,5 +2,9 @@
 # In production these come from a human typing into the operator console in
 # real time; here they are scripted so the demo is reproducible. The
 # interactive mode (--handoff interactive) reads real keystrokes instead.
+# The override code is a dummy demo credential (see SUPERVISOR_OVERRIDE_CODE
+# in src/target_app/app.py) -- a real deployment would have the supervisor
+# type their own, never a scripted constant.
+fill Override Code|sup-override-9911
 click I have authorized access
 resume

@@ -13,6 +13,11 @@ same `page`, which now reflects whatever the human changed.
 The control-transfer model is a simple two-state machine (AUTOMATION / HUMAN)
 plus a logged, reasoned "intervention request" that carries the context a
 person needs to act (which capability/step, why, current URL, a screenshot).
+That request is also actually routed to a human, not just logged: see
+src/handoff/notifier.py -- an email (or, via a carrier's email-to-SMS
+gateway, a text) is sent, or written to evidence/ if no SMTP is configured,
+so "route an intervention request to a human operator" means something more
+than "print to the terminal the operator happens to already be watching."
 A full real-time co-browsing console is out of scope (see the brief's scope
 note); this is a bare-but-real operator surface: a command REPL that acts on
 the live page. Swapping it for a web-based operator console later means
@@ -30,6 +35,7 @@ from playwright.sync_api import Page
 
 from src.common import locator_resolver
 from src.common.evidence import EvidenceRecorder
+from src.handoff.notifier import NotificationConfig, send_intervention_notice
 from src.safety.allowlist import Allowlist
 
 
@@ -59,6 +65,11 @@ class HandoffController:
     operator_script: List[str] = field(default_factory=list)
     state: ControlState = ControlState.AUTOMATION
     human_actions: List[str] = field(default_factory=list)
+    # Real notification channel, not just a print statement -- see
+    # src/handoff/notifier.py. Defaults to reading ESCALATION_* env vars;
+    # unset (the default) means the demo runs fully offline via the
+    # notifier's dry-run fallback. Overridable per-instance for tests.
+    notification_config: NotificationConfig = field(default_factory=NotificationConfig.from_env)
 
     def request_intervention(self, capability_id: str, step_id: str, reason: str,
                               context: Optional[dict] = None) -> InterventionOutcome:
@@ -74,6 +85,12 @@ class HandoffController:
             **context,
         )
         self.state = ControlState.HUMAN
+
+        notice_result = send_intervention_notice(
+            self.notification_config, self.evidence, capability_id=capability_id, step_id=step_id,
+            reason=reason, current_url=self.page.url, screenshot=screenshot,
+        )
+
         print("\n" + "=" * 72)
         print("HUMAN INTERVENTION REQUESTED")
         print(f"  capability : {capability_id}")
@@ -81,6 +98,7 @@ class HandoffController:
         print(f"  reason     : {reason}")
         print(f"  current URL: {self.page.url}")
         print(f"  screenshot : {screenshot}")
+        print(f"  notified   : {notice_result}")
         print("=" * 72 + "\n")
 
         if self.mode == "auto_approve":

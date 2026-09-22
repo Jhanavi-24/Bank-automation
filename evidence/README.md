@@ -3,6 +3,9 @@
 Each subdirectory is one run (`discovery_<id>` or `replay_<id>`), containing:
 - `log.jsonl` -- structured, ordered log of every decision/action/outcome
 - `screenshots/` -- captured on every observation, plus extra shots on any error/interrupt/escalation
+- `notifications/` -- present on runs that escalated (see below): the actual email/text notice a human
+  would receive, or (with no `ESCALATION_*` env vars set, the default) the exact notice that would have
+  been sent, written here instead so the mechanism is inspectable without live SMTP access
 - `artifact.json` (discovery runs only) -- the exact capability artifact produced
 - `result.json` -- the final structured outcome
 
@@ -29,12 +32,12 @@ Each subdirectory is one run (`discovery_<id>` or `replay_<id>`), containing:
 | `replay_...-61447d` | lookup_member_balance | member_id=12346 | Success on a **different** member -- proves the artifact is reusable, not hardcoded |
 | `replay_...-ff8b13` | lookup_member_balance | member_id=00000 | **Business outcome**: MEMBER_NOT_FOUND |
 | `replay_...-d46b53` | lookup_member_balance | member_id=50000 | **Recoverable**: transient "system busy" auto-retried once, then succeeds |
-| `replay_...-33798f` | lookup_member_balance | member_id=66666 | **Hard failure -> human handoff**: an unhandled interrupt (deliberately not in the interrupt library) escalates to a human operator, who authorizes access on the *same live session*; replay then resumes and completes |
+| `replay_1790006998-b84cd8` | lookup_member_balance | member_id=66666 | **Hard failure -> human handoff**: an unhandled interrupt (deliberately not in the interrupt library) escalates to a human operator, who authorizes access on the *same live session*; replay then resumes and completes. See its `notifications/step_4.txt` for the actual escalation notice (see `src/handoff/notifier.py`). Supersedes the earlier `replay_...-33798f` run (same scenario, predates the notification feature -- kept for history). |
 | `replay_...-236778` | open_member_sub_account | member_id=12346 | **Blocked**: irreversible step refused without `--confirm-irreversible` |
 | `replay_...-e256cd` | open_member_sub_account | member_id=12346 | **Success**: same run, explicitly confirmed |
 | `replay_...-9b4715` | open_member_sub_account | member_id=12347, deposit=-10 | **Business outcome**: INVALID_DEPOSIT_AMOUNT (server-side validation) |
 | `replay_...-cb6387` / `...-0b1a4f` | open_member_sub_account | member_id=12345 | Blocked, then succeeded with confirmation (re-verification pair) |
-| `replay_...-d2da45` | open_member_sub_account | member_id=12346 | **Irreversible step approved via human handoff** instead of the CLI flag |
+| `replay_1790007026-16f5dd` | open_member_sub_account | member_id=12346 | **Irreversible step approved via human handoff** instead of the CLI flag. See its `notifications/step_8.txt` for the escalation notice. Supersedes the earlier `replay_...-d2da45` run (same scenario, predates the notification feature -- kept for history). |
 
 To regenerate any of these, see the exact commands in README.md "Demo path". The scripted operator
 commands used for the handoff runs are in `demo/operator_override.txt` and `demo/operator_approve.txt` --
