@@ -1,4 +1,4 @@
-# Computer-Use Automation System (take-home)
+# Computer-Use Automation System
 
 An LLM discovers how to complete a goal against a live web app; the successful run is recorded as a
 typed, versioned **capability artifact**; that artifact is then replayed **deterministically, with no
